@@ -7,9 +7,11 @@ from stable_baselines import A2C
 from stable_baselines.common.policies import CnnPolicy
 from relational_policies import RelationalPolicy, RelationalLstmPolicy  # custom Policy
 from stable_baselines.common.vec_env import SubprocVecEnv
+from stable_baselines.common.vec_env.dummy_vec_env import DummyVecEnv
 from stable_baselines.common import set_global_seeds
 from stable_baselines.bench import Monitor
 from stable_baselines.common.atari_wrappers import FrameStack
+import numpy as np
 
 
 def saveInLearn(log_dir):
@@ -66,7 +68,7 @@ def set_model(config, env, log_dir):
     base_mode = {'A2C': A2C}
     # whether reduce oberservation
     policy[config.policy_name].reduce_obs = config.reduce_obs
-    model = base_mode[config.model_name](policy[config.policy_name], env, verbose=1)
+    model = base_mode[config.model_name](policy[config.policy_name], env, verbose=1, tensorboard_log=log_dir)
     print(("--------Algorithm:{} with {} num_cpu:{} total_timesteps:{} Start to train!--------\n")
           .format(config.model_name, config.policy_name, config.num_cpu, config.total_timesteps))
     return model
@@ -77,8 +79,23 @@ def run(config):
     env = set_env(config, log_dir)
     model = set_model(config, env, log_dir)
     model.learn(total_timesteps=int(config.total_timesteps), callback=saveInLearn(log_dir) if config.save else None)
-    # if config.save:
-    #     model.save(log_dir + 'model.pkl')
+    if config.save:
+        model.save(log_dir + 'model.pkl')
+
+    env_id = config.env_name + 'NoFrameskip-v4'
+    env = gym.make(env_id, level=config.env_level)
+    obs =  np.copy(env.reset())
+    obs = np.expand_dims(obs, axis=0)
+    while True:
+      action, _states = model.predict(obs)
+      obs, rewards, dones, info = env.step(action)
+      obs = np.expand_dims(obs, axis=0)
+      env.render()
+      #attention = model.attention(obs)
+      #env.render(attention)   
+      
+      if dones:
+         obs[:] = env.reset()
 
 
 if __name__ == '__main__':

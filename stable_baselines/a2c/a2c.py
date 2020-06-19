@@ -174,6 +174,7 @@ class A2C(ActorCriticRLModel):
                 self.proba_step = step_model.proba_step
                 self.value = step_model.value
                 self.initial_state = step_model.initial_state
+                self.attention = step_model.attention
                 tf.global_variables_initializer().run(session=self.sess)
 
                 self.summary = tf.summary.merge_all()

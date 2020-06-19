@@ -60,8 +60,8 @@ def deepconcise_cnn(scaled_images, **kwargs):
     :return: (TensorFlow Tensor) The CNN output layer
     """
     activ = tf.nn.relu
-    layer_1 = activ(conv(scaled_images, 'c1', n_filters=32, filter_size=3, stride=1, init_scale=np.sqrt(2), **kwargs))
-    layer_2 = activ(conv(layer_1, 'c2', n_filters=64, filter_size=2, stride=1, init_scale=np.sqrt(2), **kwargs))
+    layer_1 = activ(conv(scaled_images, 'c1', n_filters=32, filter_size=3, stride=1, init_scale=np.sqrt(2),pad='SAME', **kwargs))
+    layer_2 = activ(conv(layer_1, 'c2', n_filters=64, filter_size=2, stride=1, init_scale=np.sqrt(2), pad='SAME', **kwargs))
     return layer_2
 
 
@@ -372,6 +372,7 @@ def reduce_border_extractor(input_tensor, cnn_extractor):
 def build_entities(processed_obs, reduce_obs=False):
     coor = get_coor(processed_obs)
     cnn_extractor = deepconcise_cnn
+    #cnn_extractor = concise_cnn
     if reduce_obs:
         # [B,Height,W,D+2]
         processed_obs = tf.concat([processed_obs, coor], axis=3)

@@ -1,0 +1,14 @@
+{
+  "env_name": "BoxRandWorld",
+  "env_level": "easy",
+  "policy_name": "RelationalPolicy",
+  "model_name": "A2C",
+  "reduce_obs": false,
+  "timeline": false,
+  "frame_stack": false,
+  "cuda_device": "1",
+  "num_cpu": 4,
+  "total_timesteps": 2000000.0,
+  "log_dir": "exp_result",
+  "save": true
+}

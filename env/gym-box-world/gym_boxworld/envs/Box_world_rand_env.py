@@ -269,12 +269,31 @@ class BoxWoldRandEnv(gym.Env):
                 observation[i * gs0:(i + 1) * gs0, j * gs1:(j + 1) * gs1] = np.array(COLORS[world_map[i, j]])
         return observation
 
-    def render(self, model='huamn'):
-        img = self.observation
-        fig = plt.figure(0)
-        plt.clf()
-        plt.imshow(img / 255)
-        fig.canvas.draw()
+    def render(self, attention = None, model='huamn'):
+        if attention is None:
+            img = self.observation
+            fig = plt.figure(0)
+            plt.clf()
+            plt.imshow(img / 255)
+            fig.canvas.draw()
+            plt.pause(0.0001)
+                
+        if attention is not None:
+            img = self.observation
+            fig = plt.figure(0)
+            ax1 = fig.add_subplot(1, 3, 1)
+            ax1.imshow(img / 255)
+
+            agent_attention1 = attention[0,0,self.get_current_agent_position()]
+            agent_attention1 = np.reshape(agent_attention1, (14,14))
+            ax2 = fig.add_subplot(1, 3, 2)
+            ax2.imshow(agent_attention1,cmap='gray')
+
+            agent_attention2 = attention[0,1,self.get_current_agent_position()]
+            agent_attention2 = np.reshape(agent_attention2, (14,14))
+            ax3 = fig.add_subplot(1, 3, 3)
+            ax3.imshow(agent_attention2,cmap='gray')
+
         plt.pause(0.0001)
 
     def get_action_meanings(self):

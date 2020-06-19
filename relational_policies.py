@@ -92,6 +92,7 @@ class RelationalLstmPolicy(RecurrentActorCriticPolicy):
 
 
 def relation_block(self, processed_obs):
+    print("processed_obs:", processed_obs)
     entities = build_entities(processed_obs, self.reduce_obs)
     print('entities:', entities)
     # [B,n_heads,N,Deepth=D+2]
